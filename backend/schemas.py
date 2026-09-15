@@ -27,3 +27,13 @@ class TicketResponse(BaseModel):
 class TicketUpdate(BaseModel):
     status: Optional[str] = None
     notes: Optional[str] = None
+
+class TicketListResponse(BaseModel):
+    ticket_id: str
+    customer_name: str
+    subject: str
+    status: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

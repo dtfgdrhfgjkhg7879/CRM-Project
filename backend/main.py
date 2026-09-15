@@ -1,12 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from typing import Optional
-from .database import engine, Base, get_db
-from .models import Ticket
-from .schemas import TicketCreate
-from .schemas import TicketCreate, TicketDetailResponse
+from datetime import datetime
 
+from .database import engine, Base, get_db
+from .models import Ticket, Note
+from .schemas import TicketCreate, TicketUpdate
 
 app = FastAPI(
     title="Support CRM API",
@@ -124,12 +123,18 @@ def get_ticket_details(
         .first()
     )
 
-    # Ticket not found
     if not ticket:
         raise HTTPException(
             status_code=404,
             detail="Ticket not found"
         )
+
+    notes = (
+        db.query(Note)
+        .filter(Note.ticket_id == ticket.ticket_id)
+        .order_by(Note.created_at.desc())
+        .all()
+    )
 
     return {
         "ticket_id": ticket.ticket_id,
@@ -140,5 +145,64 @@ def get_ticket_details(
         "status": ticket.status,
         "created_at": ticket.created_at,
         "updated_at": ticket.updated_at,
-        "notes": []
+        "notes": [
+            {
+                "id": note.id,
+                "note_text": note.note_text,
+                "created_at": note.created_at
+            }
+            for note in notes
+        ]
+    }
+
+# UPDATE TICKET
+@app.put("/api/tickets/{ticket_id}")
+def update_ticket(
+    ticket_id: str,
+    ticket_data: TicketUpdate,
+    db: Session = Depends(get_db)
+):
+    # Find the ticket
+    ticket = (
+        db.query(Ticket)
+        .filter(Ticket.ticket_id == ticket_id)
+        .first()
+    )
+
+    if not ticket:
+        raise HTTPException(
+            status_code=404,
+            detail="Ticket not found"
+        )
+
+    # Validate status
+    allowed_statuses = ["Open", "In Progress", "Closed"]
+
+    if ticket_data.status is not None:
+        if ticket_data.status not in allowed_statuses:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid status"
+            )
+
+        ticket.status = ticket_data.status
+
+    # Add a note if provided
+    if ticket_data.notes:
+        new_note = Note(
+            ticket_id=ticket.ticket_id,
+            note_text=ticket_data.notes
+        )
+
+        db.add(new_note)
+
+    # Update timestamp
+    ticket.updated_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(ticket)
+
+    return {
+        "success": True,
+        "updated_at": ticket.updated_at
     }

@@ -5,6 +5,8 @@ from typing import Optional
 from .database import engine, Base, get_db
 from .models import Ticket
 from .schemas import TicketCreate
+from .schemas import TicketCreate, TicketDetailResponse
+
 
 app = FastAPI(
     title="Support CRM API",
@@ -108,3 +110,35 @@ def get_tickets(
         }
         for ticket in tickets
     ]
+
+
+# GET TICKET DETAILS
+@app.get("/api/tickets/{ticket_id}")
+def get_ticket_details(
+    ticket_id: str,
+    db: Session = Depends(get_db)
+):
+    ticket = (
+        db.query(Ticket)
+        .filter(Ticket.ticket_id == ticket_id)
+        .first()
+    )
+
+    # Ticket not found
+    if not ticket:
+        raise HTTPException(
+            status_code=404,
+            detail="Ticket not found"
+        )
+
+    return {
+        "ticket_id": ticket.ticket_id,
+        "customer_name": ticket.customer_name,
+        "customer_email": ticket.customer_email,
+        "subject": ticket.subject,
+        "description": ticket.description,
+        "status": ticket.status,
+        "created_at": ticket.created_at,
+        "updated_at": ticket.updated_at,
+        "notes": []
+    }

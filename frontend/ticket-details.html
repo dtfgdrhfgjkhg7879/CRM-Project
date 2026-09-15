@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <a href="index.html">← Back to Dashboard</a>
+
+        <h1>Ticket Details</h1>
+
+        <div id="ticketDetails">Loading...</div>
+
+        <hr>
+
+        <h2>Update Ticket</h2>
+
+        <label>Status</label>
+        <select id="status">
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Closed">Closed</option>
+        </select>
+
+        <br><br>
+
+        <label>New Note</label>
+        <textarea id="notes" rows="4"></textarea>
+
+        <br><br>
+
+        <button onclick="updateTicket()">Save Changes</button>
+
+        <p id="message"></p>
+    </div>
+
+    <script src="ticket-details.js"></script>
+</body>
+</html>

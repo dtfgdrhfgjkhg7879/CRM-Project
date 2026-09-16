@@ -1,150 +1,812 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support CRM Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SupportCRM | Dashboard</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
+
+
 <body>
 
-<div class="app-layout">
+<div class="app">
+
+
+    <!-- ================= SIDEBAR ================= -->
 
     <aside class="sidebar">
+
         <div class="brand">
-            <div class="brand-logo">S</div>
-            <div>
-                <h2>SupportCRM</h2>
-                <span>Customer Service</span>
+
+            <div class="brand-logo">
+                S
             </div>
+
+            <div class="brand-text">
+
+                <h2>SupportCRM</h2>
+
+                <span>
+                    Customer Support
+                </span>
+
+            </div>
+
         </div>
 
-        <nav class="sidebar-nav">
-            <a href="index.html" class="active">
-                <span>▦</span>
-                Dashboard
+
+        <nav class="navigation">
+
+            <div class="nav-label">
+                WORKSPACE
+            </div>
+
+
+            <a
+                href="index.html"
+                class="nav-link active"
+            >
+
+                <span class="nav-icon">▦</span>
+
+                <span>
+                    Dashboard
+                </span>
+
             </a>
 
-            <a href="create-ticket.html">
-                <span>＋</span>
-                Create Ticket
+
+            <a
+                href="#tickets"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">🎫</span>
+
+                <span>
+                    Tickets
+                </span>
+
             </a>
+
+
+            <a
+                href="create-ticket.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">＋</span>
+
+                <span>
+                    Create Ticket
+                </span>
+
+            </a>
+
+
+            <div class="nav-label management-label">
+                MANAGEMENT
+            </div>
+
+
+            <a
+    href="customers.html"
+    class="nav-link"
+>
+    <span class="nav-icon">👥</span>
+
+    <span>
+        Customers
+    </span>
+</a>
+
+
+<a
+    href="reports.html"
+    class="nav-link"
+>
+    <span class="nav-icon">▥</span>
+
+    <span>
+        Reports
+    </span>
+</a>
+
         </nav>
 
-        <div class="sidebar-footer">
-            <span class="online-dot"></span>
-            System Online
+
+        <!-- SIDEBAR BOTTOM -->
+
+        <div class="sidebar-bottom">
+
+
+            <div class="system-status">
+
+                <span class="online-dot"></span>
+
+                <div>
+
+                    <strong>
+                        System Online
+                    </strong>
+
+                    <small>
+                        API connected
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="profile">
+
+                <div class="profile-avatar">
+                    SA
+                </div>
+
+                <div>
+
+                    <strong>
+                        Support Admin
+                    </strong>
+
+                    <small>
+                        Administrator
+                    </small>
+
+                </div>
+
+            </div>
+
         </div>
+
     </aside>
 
-    <main class="main-content">
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
 
         <header class="topbar">
+
             <div>
-                <p class="eyebrow">WORKSPACE</p>
-                <h1>Support Dashboard</h1>
-                <p class="subtitle">
-                    Monitor and manage customer support tickets.
+
+                <div class="breadcrumb">
+                    Workspace / Dashboard
+                </div>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Monitor customer requests and support activity.
                 </p>
+
             </div>
 
-            <a href="create-ticket.html" class="button">
-                ＋ New Ticket
-            </a>
+
+            <div class="topbar-actions">
+
+                <button
+                    class="icon-button"
+                    onclick="loadDashboard()"
+                    title="Refresh"
+                >
+                    ↻
+                </button>
+
+
+                <a
+                    href="create-ticket.html"
+                    class="btn btn-primary"
+                >
+                    <span>＋</span>
+                    New Ticket
+                </a>
+
+            </div>
+
         </header>
 
-        <section class="summary-cards">
-            <div class="summary-card">
-                <div class="card-icon">▤</div>
-                <div>
-                    <p>Total Tickets</p>
-                    <h2 id="totalTickets">0</h2>
+
+        <!-- ================= KPI CARDS ================= -->
+
+        <section class="stats-grid">
+
+
+            <div class="stat-card">
+
+                <div class="stat-card-top">
+
+                    <div class="stat-icon total">
+                        🎫
+                    </div>
+
+                    <span class="stat-label">
+                        TOTAL TICKETS
+                    </span>
+
                 </div>
+
+                <h2 id="totalTickets">
+                    0
+                </h2>
+
+                <p>
+                    All customer requests
+                </p>
+
             </div>
 
-            <div class="summary-card">
-                <div class="card-icon open-icon">●</div>
-                <div>
-                    <p>Open Tickets</p>
-                    <h2 id="openTickets">0</h2>
+
+            <div class="stat-card">
+
+                <div class="stat-card-top">
+
+                    <div class="stat-icon open">
+                        ●
+                    </div>
+
+                    <span class="stat-label">
+                        OPEN
+                    </span>
+
                 </div>
+
+                <h2 id="openTickets">
+                    0
+                </h2>
+
+                <p>
+                    Awaiting action
+                </p>
+
             </div>
 
-            <div class="summary-card">
-                <div class="card-icon progress-icon">◷</div>
-                <div>
-                    <p>In Progress</p>
-                    <h2 id="progressTickets">0</h2>
+
+            <div class="stat-card">
+
+                <div class="stat-card-top">
+
+                    <div class="stat-icon progress">
+                        ◐
+                    </div>
+
+                    <span class="stat-label">
+                        IN PROGRESS
+                    </span>
+
                 </div>
+
+                <h2 id="progressTickets">
+                    0
+                </h2>
+
+                <p>
+                    Currently being handled
+                </p>
+
             </div>
 
-            <div class="summary-card">
-                <div class="card-icon closed-icon">✓</div>
-                <div>
-                    <p>Closed Tickets</p>
-                    <h2 id="closedTickets">0</h2>
+
+            <div class="stat-card">
+
+                <div class="stat-card-top">
+
+                    <div class="stat-icon closed">
+                        ✓
+                    </div>
+
+                    <span class="stat-label">
+                        CLOSED
+                    </span>
+
                 </div>
+
+                <h2 id="closedTickets">
+                    0
+                </h2>
+
+                <p>
+                    Resolved requests
+                </p>
+
             </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-card-top">
+
+                    <div class="stat-icon urgent">
+                        !
+                    </div>
+
+                    <span class="stat-label">
+                        URGENT
+                    </span>
+
+                </div>
+
+                <h2 id="urgentTickets">
+                    0
+                </h2>
+
+                <p>
+                    Requires attention
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-card-top">
+
+                    <div class="stat-icon high">
+                        ↑
+                    </div>
+
+                    <span class="stat-label">
+                        HIGH PRIORITY
+                    </span>
+
+                </div>
+
+                <h2 id="highTickets">
+                    0
+                </h2>
+
+                <p>
+                    Priority requests
+                </p>
+
+            </div>
+
         </section>
 
-        <section class="ticket-panel">
 
-            <div class="panel-header">
-                <div>
-                    <h2>All Tickets</h2>
-                    <p>Search and manage customer requests.</p>
+        <!-- ================= ANALYTICS ================= -->
+
+        <section class="analytics-grid">
+
+
+            <!-- STATUS CHART -->
+
+            <div class="panel chart-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Ticket Overview
+                        </h2>
+
+                        <p>
+                            Current ticket status distribution
+                        </p>
+
+                    </div>
+
                 </div>
+
+
+                <div class="chart-container">
+
+                    <canvas id="statusChart"></canvas>
+
+                    <div
+                        id="statusChartEmpty"
+                        class="chart-empty"
+                    >
+                        No ticket data available
+                    </div>
+
+                </div>
+
             </div>
 
-            <div class="controls">
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Search by ID, name, email, subject..."
+
+            <!-- PRIORITY CHART -->
+
+            <div class="panel chart-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <h2>
+                            Priority Distribution
+                        </h2>
+
+                        <p>
+                            Tickets grouped by priority
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chart-container">
+
+                    <canvas id="priorityChart"></canvas>
+
+                    <div
+                        id="priorityChartEmpty"
+                        class="chart-empty"
+                    >
+                        No ticket data available
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= TICKETS ================= -->
+
+        <section
+            class="panel tickets-panel"
+            id="tickets"
+        >
+
+
+            <div class="panel-header tickets-header">
+
+                <div>
+
+                    <h2>
+                        Support Tickets
+                    </h2>
+
+                    <p>
+                        Search, filter and manage customer requests.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="btn btn-secondary"
+                    onclick="loadDashboard()"
                 >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <!-- FILTERS -->
+
+            <div class="filters">
+
+
+                <div class="search-box">
+
+                    <span>
+                        ⌕
+                    </span>
+
+                    <input
+                        id="searchInput"
+                        type="text"
+                        placeholder="Search tickets, customers, subjects..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
 
                 <select id="statusFilter">
-                    <option value="">All Statuses</option>
-                    <option value="Open">Open</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Closed">Closed</option>
+
+                    <option value="">
+                        All Statuses
+                    </option>
+
+                    <option value="Open">
+                        Open
+                    </option>
+
+                    <option value="In Progress">
+                        In Progress
+                    </option>
+
+                    <option value="Closed">
+                        Closed
+                    </option>
+
                 </select>
 
-                <button onclick="loadTickets()">Search</button>
+
+                <select id="priorityFilter">
+
+                    <option value="">
+                        All Priorities
+                    </option>
+
+                    <option value="Urgent">
+                        Urgent
+                    </option>
+
+                    <option value="High">
+                        High
+                    </option>
+
+                    <option value="Medium">
+                        Medium
+                    </option>
+
+                    <option value="Low">
+                        Low
+                    </option>
+
+                </select>
+
+
+                <select id="categoryFilter">
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    <option value="Technical">
+                        Technical
+                    </option>
+
+                    <option value="Billing">
+                        Billing
+                    </option>
+
+                    <option value="Account">
+                        Account
+                    </option>
+
+                    <option value="Feature Request">
+                        Feature Request
+                    </option>
+
+                    <option value="Complaint">
+                        Complaint
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+
+                <select id="sortFilter">
+
+                    <option value="newest">
+                        Newest First
+                    </option>
+
+                    <option value="oldest">
+                        Oldest First
+                    </option>
+
+                    <option value="priority">
+                        Priority
+                    </option>
+
+                    <option value="subject">
+                        Subject
+                    </option>
+
+                </select>
+
             </div>
 
-            <div class="table-wrapper">
+
+            <div class="result-bar">
+
+                <span id="resultCount">
+                    0 tickets
+                </span>
+
+                <span id="lastUpdated">
+                    Not updated yet
+                </span>
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="table-container">
+
                 <table>
+
                     <thead>
-                        <tr>
-                            <th>Ticket ID</th>
-                            <th>Customer</th>
-                            <th>Subject</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th>Action</th>
-                        </tr>
+
+                    <tr>
+
+                        <th>
+                            Ticket
+                        </th>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Subject
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Priority
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Assigned To
+                        </th>
+
+                        <th>
+                            Created
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
                     </thead>
 
+
                     <tbody id="ticketTable">
-    <tr>
-        <td colspan="6">
-            <div class="loading-state">
-                <div class="spinner"></div>
-                Loading tickets...
-            </div>
-        </td>
-    </tr>
-</tbody>
+
+                    <tr>
+
+                        <td colspan="9">
+
+                            <div class="loading-state">
+
+                                <div class="spinner"></div>
+
+                                Loading tickets...
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
                 </table>
+
+            </div>
+
+
+            <!-- EMPTY -->
+
+            <div
+                id="emptyState"
+                class="empty-state"
+            >
+
+                <div class="empty-icon">
+                    🎫
+                </div>
+
+                <h3>
+                    No tickets found
+                </h3>
+
+                <p>
+                    There are no tickets matching your current filters.
+                </p>
+
+                <a
+                    href="create-ticket.html"
+                    class="btn btn-primary"
+                >
+                    ＋ Create Ticket
+                </a>
+
             </div>
 
         </section>
 
+
+        <!-- ================= RECENT ACTIVITY ================= -->
+
+        <section class="panel activity-panel">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2>
+                        Recent Activity
+                    </h2>
+
+                    <p>
+                        Latest support ticket activity
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div id="activityList">
+
+                <div class="activity-empty">
+                    No recent activity.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <span>
+                © 2026 SupportCRM
+            </span>
+
+            <span>
+                Customer Support Management System
+            </span>
+
+            <span>
+                API v2.0
+            </span>
+
+        </footer>
+
+
     </main>
+
 </div>
 
-<script src="script.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
 </body>
+
 </html>

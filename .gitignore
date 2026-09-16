@@ -1,20 +1,14 @@
-# Python
 __pycache__/
-*.py[cod]
-.venv/
-venv/
+*.pyc
 
-# Environment variables
+venv/
+.venv/
+
 .env
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+support_crm.db
 
-# IDE
 .vscode/
+.idea/
 
-# OS
 .DS_Store
-Thumbs.db

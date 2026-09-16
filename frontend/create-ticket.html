@@ -1,37 +1,467 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Ticket</title>
-    <link rel="stylesheet" href="style.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SupportCRM | Create Ticket</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <style>
+
+        .form-page {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+        }
+
+        .form-header {
+            margin-bottom: 25px;
+        }
+
+        .form-header h2 {
+            font-size: 19px;
+        }
+
+        .form-header p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 11px;
+            outline: none;
+            font-size: 12px;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #818cf8;
+            box-shadow:
+                0 0 0 3px
+                rgba(99,102,241,.08);
+        }
+
+        .required {
+            color: #dc2626;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .message {
+            display: none;
+            padding: 12px;
+            border-radius: 7px;
+            margin-bottom: 18px;
+            font-size: 11px;
+        }
+
+        .message.error {
+            display: block;
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        @media(max-width:650px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+        }
+
+    </style>
+
 </head>
+
+
 <body>
-    <div class="container">
-        <h1>Create New Ticket</h1>
 
-        <form id="ticketForm">
-            <label>Customer Name</label>
-            <input type="text" id="customerName" required>
+<div class="app">
 
-            <label>Customer Email</label>
-            <input type="email" id="customerEmail" required>
+    <aside class="sidebar">
 
-            <label>Subject</label>
-            <input type="text" id="subject" required>
+        <div class="brand">
 
-            <label>Description</label>
-            <textarea id="description" rows="6" required></textarea>
+            <div class="brand-logo">
+                S
+            </div>
 
-            <br><br>
+            <div>
+                <h2>SupportCRM</h2>
+                <span>Customer Support</span>
+            </div>
 
-            <button type="submit">Create Ticket</button>
-            <a href="index.html">Cancel</a>
-        </form>
+        </div>
 
-        <p id="message"></p>
-    </div>
 
-    <script src="create-ticket.js"></script>
+        <nav>
+
+            <a
+                href="index.html"
+                class="nav-link"
+            >
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a
+                href="index.html#tickets"
+                class="nav-link"
+            >
+                <span>🎫</span>
+                Tickets
+            </a>
+
+            <a
+                href="create-ticket.html"
+                class="nav-link active"
+            >
+                <span>＋</span>
+                New Ticket
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    Create Ticket
+                </h1>
+
+                <p>
+                    Create a new customer support request.
+                </p>
+
+            </div>
+
+            <a
+                href="index.html"
+                class="btn btn-secondary"
+            >
+                ← Back
+            </a>
+
+        </header>
+
+
+        <div class="form-page">
+
+            <div class="form-card">
+
+                <div class="form-header">
+
+                    <h2>
+                        Ticket Information
+                    </h2>
+
+                    <p>
+                        Provide the customer's issue and ticket details.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="message"
+                    class="message"
+                ></div>
+
+
+                <form id="ticketForm">
+
+                    <div class="form-grid">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Customer Name
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                id="customerName"
+                                required
+                                placeholder="e.g. Rahul Sharma"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Customer Email
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                id="customerEmail"
+                                type="email"
+                                required
+                                placeholder="customer@example.com"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label>
+                                Subject
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                id="subject"
+                                required
+                                placeholder="Briefly describe the issue"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Priority
+                            </label>
+
+                            <select id="priority">
+
+                                <option value="Low">
+                                    Low
+                                </option>
+
+                                <option
+                                    value="Medium"
+                                    selected
+                                >
+                                    Medium
+                                </option>
+
+                                <option value="High">
+                                    High
+                                </option>
+
+                                <option value="Urgent">
+                                    Urgent
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Category
+                            </label>
+
+                            <select id="category">
+
+                                <option value="Technical">
+                                    Technical
+                                </option>
+
+                                <option value="Billing">
+                                    Billing
+                                </option>
+
+                                <option value="Account">
+                                    Account
+                                </option>
+
+                                <option value="Feature Request">
+                                    Feature Request
+                                </option>
+
+                                <option value="Complaint">
+                                    Complaint
+                                </option>
+
+                                <option
+                                    value="Other"
+                                    selected
+                                >
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Assigned Agent
+                            </label>
+
+                            <select id="assignedAgent">
+
+                                <option value="Unassigned">
+                                    Unassigned
+                                </option>
+
+                                <option value="Rahul Mehta">
+                                    Rahul Mehta
+                                </option>
+
+                                <option value="Priya Shah">
+                                    Priya Shah
+                                </option>
+
+                                <option value="Amit Patel">
+                                    Amit Patel
+                                </option>
+
+                                <option value="Sneha Joshi">
+                                    Sneha Joshi
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Due Date
+                            </label>
+
+                            <input
+                                id="dueDate"
+                                type="datetime-local"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group full">
+
+                            <label>
+                                Description
+                                <span class="required">*</span>
+                            </label>
+
+                            <textarea
+                                id="description"
+                                required
+                                placeholder="Describe the customer's issue in detail..."
+                            ></textarea>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <a
+                            href="index.html"
+                            class="btn btn-secondary"
+                        >
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            id="submitButton"
+                        >
+                            Create Ticket
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script src="create-ticket.js"></script>
+
 </body>
+
 </html>

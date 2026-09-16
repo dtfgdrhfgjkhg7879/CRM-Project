@@ -1,42 +1,702 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Details</title>
-    <link rel="stylesheet" href="style.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SupportCRM | Ticket Details</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <style>
+
+        .details-layout {
+
+            display: grid;
+
+            grid-template-columns:
+                2fr 1fr;
+
+            gap: 18px;
+
+        }
+
+        .details-card {
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            padding: 24px;
+
+            margin-bottom: 18px;
+
+        }
+
+        .ticket-title {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            align-items: flex-start;
+
+            margin-bottom: 22px;
+
+        }
+
+        .ticket-title h2 {
+
+            font-size: 19px;
+
+        }
+
+        .ticket-title p {
+
+            color: var(--muted);
+
+            font-size: 11px;
+
+            margin-top: 5px;
+
+        }
+
+        .info-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 18px;
+
+        }
+
+        .info-item label {
+
+            display: block;
+
+            color: #94a3b8;
+
+            font-size: 9px;
+
+            text-transform: uppercase;
+
+            font-weight: 700;
+
+            margin-bottom: 5px;
+
+        }
+
+        .info-item span {
+
+            font-size: 12px;
+
+            font-weight: 500;
+
+        }
+
+        .description-box {
+
+            background: #f8fafc;
+
+            padding: 16px;
+
+            border-radius: 8px;
+
+            line-height: 1.7;
+
+            font-size: 12px;
+
+            color: #475569;
+
+            white-space: pre-wrap;
+
+        }
+
+        .side-title {
+
+            font-size: 14px;
+
+            margin-bottom: 17px;
+
+        }
+
+        .control {
+
+            margin-bottom: 15px;
+
+        }
+
+        .control label {
+
+            display: block;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            margin-bottom: 6px;
+
+        }
+
+        .control select,
+        .control input,
+        .control textarea {
+
+            width: 100%;
+
+            padding: 10px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 7px;
+
+            font-size: 11px;
+
+            outline: none;
+
+        }
+
+        .control textarea {
+
+            min-height: 100px;
+
+            resize: vertical;
+
+        }
+
+        .notes {
+
+            margin-top: 20px;
+
+        }
+
+        .note {
+
+            border-left: 3px solid #c7d2fe;
+
+            padding: 8px 12px;
+
+            margin-bottom: 14px;
+
+        }
+
+        .note p {
+
+            font-size: 11px;
+
+            line-height: 1.6;
+
+        }
+
+        .note small {
+
+            display: block;
+
+            color: #94a3b8;
+
+            margin-top: 5px;
+
+            font-size: 9px;
+
+        }
+
+        .danger {
+
+            background: #fef2f2;
+
+            color: #b91c1c;
+
+            border: 1px solid #fecaca;
+
+        }
+
+        @media(max-width:850px) {
+
+            .details-layout {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
+
 <body>
-    <div class="container">
-        <a href="index.html">← Back to Dashboard</a>
 
-        <h1>Ticket Details</h1>
+<div class="app">
 
-        <div id="ticketDetails">Loading...</div>
 
-        <hr>
+    <aside class="sidebar">
 
-        <h2>Update Ticket</h2>
+        <div class="brand">
 
-        <label>Status</label>
-        <select id="status">
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Closed">Closed</option>
-        </select>
+            <div class="brand-logo">
+                S
+            </div>
 
-        <br><br>
+            <div>
 
-        <label>New Note</label>
-        <textarea id="notes" rows="4"></textarea>
+                <h2>SupportCRM</h2>
 
-        <br><br>
+                <span>
+                    Customer Support
+                </span>
 
-        <button onclick="updateTicket()">Save Changes</button>
+            </div>
 
-        <p id="message"></p>
-    </div>
+        </div>
 
-    <script src="ticket-details.js"></script>
+
+        <nav>
+
+            <a
+                href="index.html"
+                class="nav-link"
+            >
+                <span>▦</span>
+                Dashboard
+            </a>
+
+            <a
+                href="index.html#tickets"
+                class="nav-link active"
+            >
+                <span>🎫</span>
+                Tickets
+            </a>
+
+            <a
+                href="create-ticket.html"
+                class="nav-link"
+            >
+                <span>＋</span>
+                New Ticket
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="main">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <h1>
+                    Ticket Details
+                </h1>
+
+                <p>
+                    Review and update the support request.
+                </p>
+
+            </div>
+
+
+            <a
+                href="index.html"
+                class="btn btn-secondary"
+            >
+                ← Back to Tickets
+            </a>
+
+        </header>
+
+
+        <div
+            id="loading"
+            class="details-card"
+        >
+            Loading ticket...
+        </div>
+
+
+        <div
+            id="content"
+            style="display:none;"
+        >
+
+            <div class="details-layout">
+
+
+                <div>
+
+
+                    <div class="details-card">
+
+                        <div class="ticket-title">
+
+                            <div>
+
+                                <h2 id="ticketSubject">
+                                    —
+                                </h2>
+
+                                <p id="ticketId">
+                                    —
+                                </p>
+
+                            </div>
+
+                            <span
+                                id="ticketStatus"
+                                class="status open"
+                            >
+                                Open
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-grid">
+
+
+                            <div class="info-item">
+
+                                <label>
+                                    Customer
+                                </label>
+
+                                <span id="customerName">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <label>
+                                    Email
+                                </label>
+
+                                <span id="customerEmail">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <label>
+                                    Category
+                                </label>
+
+                                <span id="category">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <label>
+                                    Priority
+                                </label>
+
+                                <span id="priority">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <label>
+                                    Assigned Agent
+                                </label>
+
+                                <span id="agent">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <label>
+                                    Created
+                                </label>
+
+                                <span id="created">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <div class="info-item">
+
+                                <label>
+                                    Due Date
+                                </label>
+
+                                <span id="dueDate">
+                                    —
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="details-card">
+
+                        <h3 class="side-title">
+                            Issue Description
+                        </h3>
+
+                        <div
+                            id="description"
+                            class="description-box"
+                        >
+                        </div>
+
+                    </div>
+
+
+                    <div class="details-card">
+
+                        <h3 class="side-title">
+                            Internal Notes
+                        </h3>
+
+                        <div id="notes">
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+                <div>
+
+
+                    <div class="details-card">
+
+                        <h3 class="side-title">
+                            Update Ticket
+                        </h3>
+
+
+                        <div class="control">
+
+                            <label>
+                                Status
+                            </label>
+
+                            <select id="status">
+
+                                <option value="Open">
+                                    Open
+                                </option>
+
+                                <option value="In Progress">
+                                    In Progress
+                                </option>
+
+                                <option value="Closed">
+                                    Closed
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="control">
+
+                            <label>
+                                Priority
+                            </label>
+
+                            <select id="updatePriority">
+
+                                <option value="Low">
+                                    Low
+                                </option>
+
+                                <option value="Medium">
+                                    Medium
+                                </option>
+
+                                <option value="High">
+                                    High
+                                </option>
+
+                                <option value="Urgent">
+                                    Urgent
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="control">
+
+                            <label>
+                                Category
+                            </label>
+
+                            <select id="updateCategory">
+
+                                <option value="Technical">
+                                    Technical
+                                </option>
+
+                                <option value="Billing">
+                                    Billing
+                                </option>
+
+                                <option value="Account">
+                                    Account
+                                </option>
+
+                                <option value="Feature Request">
+                                    Feature Request
+                                </option>
+
+                                <option value="Complaint">
+                                    Complaint
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="control">
+
+                            <label>
+                                Assigned Agent
+                            </label>
+
+                            <select id="updateAgent">
+
+                                <option>
+                                    Unassigned
+                                </option>
+
+                                <option>
+                                    Rahul Mehta
+                                </option>
+
+                                <option>
+                                    Priya Shah
+                                </option>
+
+                                <option>
+                                    Amit Patel
+                                </option>
+
+                                <option>
+                                    Sneha Joshi
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="control">
+
+                            <label>
+                                Add Internal Note
+                            </label>
+
+                            <textarea
+                                id="note"
+                                placeholder="Add an internal note..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <button
+                            id="updateButton"
+                            class="btn btn-primary"
+                            style="width:100%;"
+                        >
+                            Save Changes
+                        </button>
+
+
+                        <div
+                            id="updateMessage"
+                            style="margin-top:12px;font-size:10px;"
+                        ></div>
+
+                    </div>
+
+
+                    <div class="details-card">
+
+                        <h3 class="side-title">
+                            Ticket Actions
+                        </h3>
+
+                        <button
+                            id="deleteButton"
+                            class="btn danger"
+                            style="width:100%;"
+                        >
+                            Delete Ticket
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script src="ticket-details.js"></script>
+
 </body>
+
 </html>

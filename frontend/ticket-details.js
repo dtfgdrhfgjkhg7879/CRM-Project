@@ -1,100 +1,526 @@
 const API_URL = "http://127.0.0.1:8000";
 
-const params = new URLSearchParams(window.location.search);
-const ticketId = params.get("id");
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const ticketId =
+    params.get("id");
+
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+
+const content =
+    document.getElementById(
+        "content"
+    );
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    loadTicket
+);
+
 
 async function loadTicket() {
+
     if (!ticketId) {
-        document.getElementById("ticketDetails").textContent =
-            "Ticket ID is missing.";
+
+        loading.textContent =
+            "Invalid ticket ID.";
+
         return;
+
     }
 
+
     try {
-        const response = await fetch(
-            `${API_URL}/api/tickets/${ticketId}`
-        );
+
+        const response =
+            await fetch(
+                `${API_URL}/api/tickets/${encodeURIComponent(
+                    ticketId
+                )}`
+            );
+
+
+        const data =
+            await response.json();
+
 
         if (!response.ok) {
-            throw new Error("Ticket not found");
+
+            throw new Error(
+                data.detail ||
+                "Ticket not found."
+            );
+
         }
 
-        const ticket = await response.json();
 
-        document.getElementById("ticketDetails").innerHTML = `
-            <p><strong>Ticket ID:</strong> ${ticket.ticket_id}</p>
-            <p><strong>Customer:</strong> ${ticket.customer_name}</p>
-            <p><strong>Email:</strong> ${ticket.customer_email}</p>
-            <p><strong>Subject:</strong> ${ticket.subject}</p>
-            <p><strong>Description:</strong> ${ticket.description}</p>
-            <p><strong>Created:</strong>
-                ${new Date(ticket.created_at).toLocaleString()}
-            </p>
-            <p><strong>Updated:</strong>
-                ${new Date(ticket.updated_at).toLocaleString()}
-            </p>
-        `;
+        renderTicket(
+            data.ticket,
+            data.notes
+        );
 
-        document.getElementById("status").value = ticket.status;
 
-        if (ticket.notes && ticket.notes.length > 0) {
-            document.getElementById("ticketDetails").innerHTML += `
-                <h3>Previous Notes</h3>
-                <ul>
-                    ${ticket.notes.map(note => `
-                        <li>
-                            ${note.note_text}
-                            <small>
-                                (${new Date(note.created_at).toLocaleString()})
-                            </small>
-                        </li>
-                    `).join("")}
-                </ul>
-            `;
-        }
+        loading.style.display =
+            "none";
+
+        content.style.display =
+            "block";
+
 
     } catch (error) {
-        document.getElementById("ticketDetails").textContent =
-            error.message;
+
+        loading.innerHTML = `
+
+            <div class="error-state">
+
+                <h3>
+                    ⚠ ${escapeHTML(
+                        error.message
+                    )}
+                </h3>
+
+                <br>
+
+                <a
+                    href="index.html"
+                    class="btn btn-secondary"
+                >
+                    Back to Tickets
+                </a>
+
+            </div>
+
+        `;
+
     }
+
 }
 
+
+function renderTicket(
+    ticket,
+    notes
+) {
+
+    setText(
+        "ticketSubject",
+        ticket.subject
+    );
+
+    setText(
+        "ticketId",
+        ticket.ticket_id
+    );
+
+    setText(
+        "customerName",
+        ticket.customer_name
+    );
+
+    setText(
+        "customerEmail",
+        ticket.customer_email
+    );
+
+    setText(
+        "category",
+        ticket.category
+    );
+
+    setText(
+        "priority",
+        ticket.priority
+    );
+
+    setText(
+        "agent",
+        ticket.assigned_agent
+    );
+
+    setText(
+        "created",
+        formatDateTime(
+            ticket.created_at
+        )
+    );
+
+    setText(
+        "dueDate",
+        ticket.due_date
+            ? formatDateTime(
+                ticket.due_date
+            )
+            : "No due date"
+    );
+
+
+    document.getElementById(
+        "description"
+    ).textContent =
+        ticket.description;
+
+
+    const status =
+        document.getElementById(
+            "ticketStatus"
+        );
+
+
+    status.textContent =
+        ticket.status;
+
+
+    status.className =
+        `status ${
+            statusClass(
+                ticket.status
+            )
+        }`;
+
+
+    document.getElementById(
+        "status"
+    ).value =
+        ticket.status;
+
+
+    document.getElementById(
+        "updatePriority"
+    ).value =
+        ticket.priority;
+
+
+    document.getElementById(
+        "updateCategory"
+    ).value =
+        ticket.category;
+
+
+    document.getElementById(
+        "updateAgent"
+    ).value =
+        ticket.assigned_agent;
+
+
+    renderNotes(notes);
+
+}
+
+
+function renderNotes(notes) {
+
+    const container =
+        document.getElementById(
+            "notes"
+        );
+
+
+    if (!notes || !notes.length) {
+
+        container.innerHTML = `
+
+            <p style="
+                color:#94a3b8;
+                font-size:11px;
+            ">
+                No internal notes yet.
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        notes.map(note => `
+
+        <div class="note">
+
+            <p>
+                ${escapeHTML(
+                    note.note_text
+                )}
+            </p>
+
+            <small>
+                ${formatDateTime(
+                    note.created_at
+                )}
+            </small>
+
+        </div>
+
+    `).join("");
+
+}
+
+
+// UPDATE
+
+document.getElementById(
+    "updateButton"
+).addEventListener(
+    "click",
+    updateTicket
+);
+
+
 async function updateTicket() {
-    const status = document.getElementById("status").value;
-    const notes = document.getElementById("notes").value;
+
+    const button =
+        document.getElementById(
+            "updateButton"
+        );
+
+
+    const message =
+        document.getElementById(
+            "updateMessage"
+        );
+
+
+    const data = {
+
+        status:
+            document.getElementById(
+                "status"
+            ).value,
+
+        priority:
+            document.getElementById(
+                "updatePriority"
+            ).value,
+
+        category:
+            document.getElementById(
+                "updateCategory"
+            ).value,
+
+        assigned_agent:
+            document.getElementById(
+                "updateAgent"
+            ).value,
+
+        notes:
+            document.getElementById(
+                "note"
+            ).value.trim()
+
+    };
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Saving...";
+
 
     try {
-        const response = await fetch(
-            `${API_URL}/api/tickets/${ticketId}`,
+
+        const response =
+            await fetch(
+                `${API_URL}/api/tickets/${encodeURIComponent(
+                    ticketId
+                )}`,
+                {
+
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(data)
+
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.detail ||
+                "Update failed."
+            );
+
+        }
+
+
+        message.style.color =
+            "#047857";
+
+        message.textContent =
+            "✓ Changes saved successfully.";
+
+
+        document.getElementById(
+            "note"
+        ).value = "";
+
+
+        await loadTicket();
+
+
+        setTimeout(
+            () => {
+                message.textContent = "";
+            },
+            2500
+        );
+
+
+    } catch (error) {
+
+        message.style.color =
+            "#b91c1c";
+
+        message.textContent =
+            error.message;
+
+    }
+
+
+    button.disabled = false;
+
+    button.textContent =
+        "Save Changes";
+
+}
+
+
+// DELETE
+
+document.getElementById(
+    "deleteButton"
+).addEventListener(
+    "click",
+    async () => {
+
+        const confirmed =
+            confirm(
+                `Delete ${ticketId}? This action cannot be undone.`
+            );
+
+
+        if (!confirmed)
+            return;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/tickets/${encodeURIComponent(
+                        ticketId
+                    )}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to delete ticket."
+                );
+
+            }
+
+
+            window.location.href =
+                "index.html";
+
+
+        } catch (error) {
+
+            alert(
+                error.message
+            );
+
+        }
+
+    }
+);
+
+
+// HELPERS
+
+function setText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element)
+        element.textContent =
+            value ?? "—";
+
+}
+
+
+function formatDateTime(value) {
+
+    if (!value)
+        return "—";
+
+
+    return new Date(value)
+        .toLocaleString(
+            "en-IN",
             {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    status: status,
-                    notes: notes
-                })
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
             }
         );
 
-        const result = await response.json();
-
-        if (!response.ok) {
-            throw new Error(result.detail || "Update failed");
-        }
-
-        document.getElementById("message").textContent =
-            "Ticket updated successfully.";
-
-        document.getElementById("notes").value = "";
-
-        loadTicket();
-
-    } catch (error) {
-        document.getElementById("message").textContent =
-            error.message;
-    }
 }
 
-loadTicket();
+
+function statusClass(status) {
+
+    return {
+        "Open": "open",
+        "In Progress": "progress",
+        "Closed": "closed"
+    }[status] || "";
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}

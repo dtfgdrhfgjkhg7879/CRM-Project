@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SupportCRM | Customers</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <style>
+
+        .customer-summary {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 14px;
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .summary-card {
+
+            background: white;
+
+            border: 1px solid var(--border);
+
+            border-radius: 11px;
+
+            padding: 18px;
+
+        }
+
+
+        .summary-card span {
+
+            color: #94a3b8;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            text-transform: uppercase;
+
+        }
+
+
+        .summary-card h2 {
+
+            font-size: 23px;
+
+            margin-top: 9px;
+
+        }
+
+
+        .customer-table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+        }
+
+
+        .customer-table th {
+
+            padding: 12px;
+
+            background: #f8fafc;
+
+            color: #64748b;
+
+            font-size: 8px;
+
+            text-align: left;
+
+            text-transform: uppercase;
+
+        }
+
+
+        .customer-table td {
+
+            padding: 14px 12px;
+
+            border-top: 1px solid #f1f5f9;
+
+            font-size: 10px;
+
+        }
+
+
+        .customer-row {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+        }
+
+
+        .customer-big-avatar {
+
+            width: 32px;
+
+            height: 32px;
+
+            border-radius: 50%;
+
+            display: grid;
+
+            place-items: center;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            font-size: 9px;
+
+            font-weight: 700;
+
+        }
+
+
+        .customer-name strong {
+
+            display: block;
+
+            font-size: 10px;
+
+        }
+
+
+        .customer-name small {
+
+            display: block;
+
+            color: #94a3b8;
+
+            font-size: 8px;
+
+            margin-top: 3px;
+
+        }
+
+
+        .ticket-count {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-width: 28px;
+
+            padding: 5px 8px;
+
+            border-radius: 5px;
+
+            background: #eef2ff;
+
+            color: #4f46e5;
+
+            font-weight: 700;
+
+            font-size: 8px;
+
+        }
+
+
+        .customer-status {
+
+            color: #059669;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+        }
+
+
+        .customer-status::before {
+
+            content: "";
+
+            display: inline-block;
+
+            width: 5px;
+
+            height: 5px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            margin-right: 5px;
+
+        }
+
+
+        .customer-search {
+
+            padding: 0 20px 18px;
+
+        }
+
+
+        .customer-search input {
+
+            width: 100%;
+
+            height: 37px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 7px;
+
+            padding: 0 12px;
+
+            outline: none;
+
+            font-size: 10px;
+
+        }
+
+
+        .customer-search input:focus {
+
+            border-color: #818cf8;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(99,102,241,.07);
+
+        }
+
+
+        .customer-empty {
+
+            padding: 45px;
+
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 10px;
+
+        }
+
+
+        @media(max-width:900px) {
+
+            .customer-summary {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+        }
+
+
+        @media(max-width:550px) {
+
+            .customer-summary {
+
+                grid-template-columns: 1fr;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                S
+            </div>
+
+            <div class="brand-text">
+
+                <h2>
+                    SupportCRM
+                </h2>
+
+                <span>
+                    Customer Support
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <div class="nav-label">
+                WORKSPACE
+            </div>
+
+
+            <a
+                href="index.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ▦
+                </span>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <a
+                href="index.html#tickets"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    🎫
+                </span>
+
+                <span>
+                    Tickets
+                </span>
+
+            </a>
+
+
+            <a
+                href="create-ticket.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ＋
+                </span>
+
+                <span>
+                    Create Ticket
+                </span>
+
+            </a>
+
+
+            <div class="nav-label management-label">
+                MANAGEMENT
+            </div>
+
+
+            <a
+                href="customers.html"
+                class="nav-link active"
+            >
+
+                <span class="nav-icon">
+                    👥
+                </span>
+
+                <span>
+                    Customers
+                </span>
+
+            </a>
+
+
+            <a
+                href="reports.html"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    ▥
+                </span>
+
+                <span>
+                    Reports
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+
+                <span class="online-dot"></span>
+
+                <div>
+
+                    <strong>
+                        System Online
+                    </strong>
+
+                    <small>
+                        API connected
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="profile">
+
+                <div class="profile-avatar">
+                    SA
+                </div>
+
+                <div>
+
+                    <strong>
+                        Support Admin
+                    </strong>
+
+                    <small>
+                        Administrator
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <header class="topbar">
+
+            <div>
+
+                <div class="breadcrumb">
+                    Workspace / Customers
+                </div>
+
+                <h1>
+                    Customers
+                </h1>
+
+                <p>
+                    View customer information and support activity.
+                </p>
+
+            </div>
+
+
+            <a
+                href="create-ticket.html"
+                class="btn btn-primary"
+            >
+                ＋ New Ticket
+            </a>
+
+        </header>
+
+
+        <!-- SUMMARY -->
+
+        <section class="customer-summary">
+
+            <div class="summary-card">
+
+                <span>
+                    Total Customers
+                </span>
+
+                <h2 id="totalCustomers">
+                    0
+                </h2>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <span>
+                    Active Customers
+                </span>
+
+                <h2 id="activeCustomers">
+                    0
+                </h2>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <span>
+                    Open Requests
+                </span>
+
+                <h2 id="openRequests">
+                    0
+                </h2>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <span>
+                    Total Requests
+                </span>
+
+                <h2 id="totalRequests">
+                    0
+                </h2>
+
+            </div>
+
+        </section>
+
+
+        <!-- CUSTOMER TABLE -->
+
+        <section class="panel">
+
+
+            <div class="panel-header">
+
+                <div>
+
+                    <h2>
+                        Customer Directory
+                    </h2>
+
+                    <p>
+                        Customers generated from support ticket activity.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="customer-search">
+
+                <input
+                    id="customerSearch"
+                    type="text"
+                    placeholder="Search by customer name or email..."
+                >
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table class="customer-table">
+
+                    <thead>
+
+                    <tr>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Tickets
+                        </th>
+
+                        <th>
+                            Open
+                        </th>
+
+                        <th>
+                            Closed
+                        </th>
+
+                        <th>
+                            Last Activity
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody id="customerTable">
+
+                    <tr>
+
+                        <td colspan="6">
+
+                            <div class="loading-state">
+
+                                <div class="spinner"></div>
+
+                                Loading customers...
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <footer>
+
+            <span>
+                © 2026 SupportCRM
+            </span>
+
+            <span>
+                Customer Support Management System
+            </span>
+
+            <span>
+                Customers
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script src="customers.js"></script>
+
+</body>
+
+</html>

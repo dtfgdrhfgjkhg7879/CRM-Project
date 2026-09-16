@@ -1,9 +1,13 @@
 from datetime import datetime
 from typing import Optional
+from pathlib import Path
+import os
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import func, or_
+from fastapi.staticfiles import StaticFiles
+
+from sqlalchemy import func, or_, case
 from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
@@ -11,7 +15,24 @@ from .models import Note, Ticket
 from .schemas import TicketCreate, TicketUpdate
 
 
+# =========================================================
+# PATHS
+# =========================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
+
+
+# =========================================================
+# DATABASE
+# =========================================================
+
 Base.metadata.create_all(bind=engine)
+
+
+# =========================================================
+# FASTAPI APP
+# =========================================================
 
 app = FastAPI(
     title="Support CRM API",
@@ -19,6 +40,10 @@ app = FastAPI(
     version="2.0.0",
 )
 
+
+# =========================================================
+# CORS
+# =========================================================
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,6 +53,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# =========================================================
+# CONSTANTS
+# =========================================================
 
 ALLOWED_STATUSES = [
     "Open",
@@ -51,6 +80,10 @@ ALLOWED_CATEGORIES = [
     "Other",
 ]
 
+
+# =========================================================
+# VALIDATION
+# =========================================================
 
 def validate_ticket_values(
     status=None,
@@ -76,6 +109,10 @@ def validate_ticket_values(
         )
 
 
+# =========================================================
+# TICKET SERIALIZER
+# =========================================================
+
 def ticket_to_dict(ticket: Ticket):
     return {
         "ticket_id": ticket.ticket_id,
@@ -93,21 +130,22 @@ def ticket_to_dict(ticket: Ticket):
     }
 
 
-@app.get("/")
-def root():
-    return {
-        "message": "Support CRM API is running",
-        "version": "2.0.0",
-    }
-
+# =========================================================
+# HEALTH / API
+# =========================================================
 
 @app.get("/health")
 def health_check():
     return {
         "status": "healthy",
         "service": "Support CRM API",
+        "version": "2.0.0",
     }
 
+
+# =========================================================
+# CREATE TICKET
+# =========================================================
 
 @app.post("/api/tickets")
 def create_ticket(
@@ -142,6 +180,8 @@ def create_ticket(
 
     generated_ticket_id = f"TKT-{next_number:04d}"
 
+    now = datetime.utcnow()
+
     new_ticket = Ticket(
         ticket_id=generated_ticket_id,
         customer_name=customer_name,
@@ -151,12 +191,14 @@ def create_ticket(
         status="Open",
         priority=ticket_data.priority,
         category=ticket_data.category,
-        assigned_agent=ticket_data.assigned_agent.strip()
-        if ticket_data.assigned_agent
-        else "Unassigned",
+        assigned_agent=(
+            ticket_data.assigned_agent.strip()
+            if ticket_data.assigned_agent
+            else "Unassigned"
+        ),
         due_date=ticket_data.due_date,
-        created_at=datetime.utcnow(),
-        updated_at=datetime.utcnow(),
+        created_at=now,
+        updated_at=now,
     )
 
     db.add(new_ticket)
@@ -168,6 +210,10 @@ def create_ticket(
         "ticket": ticket_to_dict(new_ticket),
     }
 
+
+# =========================================================
+# GET / SEARCH / FILTER TICKETS
+# =========================================================
 
 @app.get("/api/tickets")
 def get_tickets(
@@ -186,15 +232,25 @@ def get_tickets(
 
     query = db.query(Ticket)
 
+    # Status filter
     if status:
-        query = query.filter(Ticket.status == status)
+        query = query.filter(
+            Ticket.status == status
+        )
 
+    # Priority filter
     if priority:
-        query = query.filter(Ticket.priority == priority)
+        query = query.filter(
+            Ticket.priority == priority
+        )
 
+    # Category filter
     if category:
-        query = query.filter(Ticket.category == category)
+        query = query.filter(
+            Ticket.category == category
+        )
 
+    # Search
     if search and search.strip():
         search_value = f"%{search.strip()}%"
 
@@ -209,35 +265,59 @@ def get_tickets(
             )
         )
 
+    # Sorting
     if sort_by == "oldest":
-        query = query.order_by(Ticket.created_at.asc())
+
+        query = query.order_by(
+            Ticket.created_at.asc()
+        )
 
     elif sort_by == "priority":
-        priority_order = func.case(
+
+        priority_order = case(
             (Ticket.priority == "Urgent", 1),
             (Ticket.priority == "High", 2),
             (Ticket.priority == "Medium", 3),
             (Ticket.priority == "Low", 4),
             else_=5,
         )
-        query = query.order_by(priority_order)
+
+        query = query.order_by(
+            priority_order,
+            Ticket.created_at.desc(),
+        )
 
     elif sort_by == "subject":
-        query = query.order_by(Ticket.subject.asc())
+
+        query = query.order_by(
+            Ticket.subject.asc()
+        )
 
     else:
-        query = query.order_by(Ticket.created_at.desc())
+
+        query = query.order_by(
+            Ticket.created_at.desc()
+        )
 
     tickets = query.all()
 
     return {
         "count": len(tickets),
-        "tickets": [ticket_to_dict(ticket) for ticket in tickets],
+        "tickets": [
+            ticket_to_dict(ticket)
+            for ticket in tickets
+        ],
     }
 
 
+# =========================================================
+# DASHBOARD STATISTICS
+# =========================================================
+
 @app.get("/api/ticket-stats")
-def get_ticket_stats(db: Session = Depends(get_db)):
+def get_ticket_stats(
+    db: Session = Depends(get_db),
+):
     total = db.query(Ticket).count()
 
     open_count = (
@@ -280,6 +360,10 @@ def get_ticket_stats(db: Session = Depends(get_db)):
     }
 
 
+# =========================================================
+# GET SINGLE TICKET
+# =========================================================
+
 @app.get("/api/tickets/{ticket_id}")
 def get_ticket(
     ticket_id: str,
@@ -299,6 +383,7 @@ def get_ticket(
 
     return {
         "ticket": ticket_to_dict(ticket),
+
         "notes": [
             {
                 "id": note.id,
@@ -309,6 +394,10 @@ def get_ticket(
         ],
     }
 
+
+# =========================================================
+# UPDATE TICKET
+# =========================================================
 
 @app.put("/api/tickets/{ticket_id}")
 def update_ticket(
@@ -344,12 +433,16 @@ def update_ticket(
         ticket.category = update_data.category
 
     if update_data.assigned_agent is not None:
-        ticket.assigned_agent = update_data.assigned_agent.strip()
+        ticket.assigned_agent = (
+            update_data.assigned_agent.strip()
+        )
 
     if update_data.due_date is not None:
         ticket.due_date = update_data.due_date
 
+    # Add note
     if update_data.notes and update_data.notes.strip():
+
         new_note = Note(
             ticket_id=ticket.ticket_id,
             note_text=update_data.notes.strip(),
@@ -368,6 +461,10 @@ def update_ticket(
         "ticket": ticket_to_dict(ticket),
     }
 
+
+# =========================================================
+# DELETE TICKET
+# =========================================================
 
 @app.delete("/api/tickets/{ticket_id}")
 def delete_ticket(
@@ -393,3 +490,31 @@ def delete_ticket(
         "message": "Ticket deleted successfully",
         "ticket_id": ticket_id,
     }
+
+
+# =========================================================
+# FRONTEND
+# =========================================================
+# IMPORTANT:
+# Keep this at the VERY END of the file.
+#
+# API routes above will continue working:
+# /api/tickets
+# /api/tickets/{ticket_id}
+# /api/ticket-stats
+# /health
+# /docs
+#
+# Everything else will be served from frontend/.
+# =========================================================
+
+if FRONTEND_DIR.exists():
+
+    app.mount(
+        "/",
+        StaticFiles(
+            directory=FRONTEND_DIR,
+            html=True,
+        ),
+        name="frontend",
+    )
